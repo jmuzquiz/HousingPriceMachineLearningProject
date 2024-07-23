@@ -111,34 +111,51 @@ This dataset is employed to develop and evaluate predictive models for housing p
 - Missing values were addressed during preprocessing.
 - The dataset was split into training and test sets for model evaluation.
 
-## Data Preprocessing
-- **Initial Setup**
+## Data Preprocessing and Exploration
+- **Initial Setup**:
   
   ```python
-#importing essential libraries
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-#loading the dataset
-data = pd.read_csv("housing.csv")
+  #importing essential libraries
+  import numpy as np
+  import pandas as pd
+  import matplotlib.pyplot as plt
+  import seaborn as sns
+  
+  #loading the dataset
+  data = pd.read_csv("housing.csv")
   ```
 
-- **Handling Missing Values**
+- **Handling Missing Values**:
 Upon inspection, the `total_bedrooms` column had missing values. Out of 20,640 entries, only 207 (approximately 1%) were missing. Since this is less than 5% of the dataset, it is acceptable to drop the rows with missing values.
 
-```python
-#check for missing values
-data.info()
+  ```python
+  #check for missing values
+  data.info()
+  
+  #drop missing values
+  data.dropna(inplace = True)
+  ```
 
-#drop missing values
-data.dropna(inplace = True)
-```
-
+- **Splitting Data into Train and Test Sets**:
+- **Exploratory Data Analysis**:
+  - **Histograms of Numerical Variables**:
+  - **Correlation with Target Variable**:
+  - **Log Transformation of Variables**:
+  - **Encoding Categorical Variable**:
+  - **Correlation Heatmap with One-Hot Encoded Variables**:
+  - **Visualization of Coordinates**
+  - **Feature Engineering**:
+  - **Correlation Heatmap with Engineered Features**:
+  - **Scaling Data**
+- looked ay histograms of numerical variables
+- did correlations with target variable
+- then log transformed 4 variables based on their histograms
 - Encoding categorical variables
-- Scaling numerical features
+- then looked at heatmap correlations with newly one hot encoded variables
+- then looked at a visualization of the coordinates (longitude and latitude)
 - Feature engineering (e.g., creating new features)
+- then looked at correlation heatmap again with new features
+- then scaled data before training models
 
 ## Exploratory Data Analysis
 - Statistical summaries
