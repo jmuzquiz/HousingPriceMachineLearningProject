@@ -171,7 +171,8 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   #basic exploration of numeric variables (not ocean proximity)
   train_data.hist(figsize = (15,8))
   ```
-  *show visual
+  ![Histograms of Numerical Variables](visuals/histograms.png)
+
   
   - **Correlation of Numerical Variables with Target Variable**:
    Calculated correlation coefficients and visualized the correlation heatmap to identify relationships between variables. Correlation coefficients measure the strength and direction of the linear relationship between two variables. They range from -1 to 1, where:
@@ -188,7 +189,8 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   plt.figure(figsize = (15,8))
   sns.heatmap(correlation_matrix, annot = True, cmap = "YlGnBu")
   ```
-  *show visual
+  ![Initial Correlation Heatmap](visuals/correlation_heatmap.png)
+
   - **Log Transformation of Variables**:
   Applied log transformations to several numerical variables to address right-skewed distributions. Log transformations are often used to normalize skewed data, making it more suitable for modeling. Adding 1 to the values before transformation avoids taking the logarithm of zero, which is undefined.
 
@@ -202,7 +204,9 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
 
   train_data.hist(figsize = (15,8)) #the transformed 4 variables look more normal now
   ```
-  *show visual
+  ![Original Histograms](visuals/four_histograms.png)
+  ![Log Transformed Histograms](visuals/four_histograms_log.png)
+  
   - **Visualizing Distribution of Categorical Variable**:
   Visualized the distribution of the `ocean_proximity` values to understand the frequency of each category.
   ```python
@@ -215,7 +219,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   plt.title('Distribution of Ocean Proximity')
   plt.show()
   ```
-  *show visual
+  ![Ocean Proximity Count](visuals/ocean_proximity_count.png)
   
   - **Applying One-Hot Encoding**:
   Applied one-hot encoding to the `ocean_proximity` variable to convert it into a format suitable for machine learning models. This process includes creating binary columns for each category.
@@ -232,13 +236,14 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   #no longer need ocean_proximity
   train_data = train_data.join(dummies).drop('ocean_proximity', axis = 1)
   ```
+  
   - **Correlation Heatmap with One-Hot Encoded Variables**:
   A new heatmap was generated to visualize the correlations between variables after applying one-hot encoding. The heatmap revealed that the `ocean_proximity` categories `<1H OCEAN` and `INLAND` had the strongest correlations with `median_house_value`, with coefficients of 0.25 and -0.48, respectively. This indicates that a house’s proximity to the ocean has a significant influence on its value, with houses closer to the ocean tending to have higher values, while inland houses tend to have lower values.
   ```python
   plt.figure(figsize = (15,8))
   sns.heatmap(train_data.corr(), annot = True, cmap = "YlGnBu")
   ```
-  *show visual
+  ![Correlation Heatmap with Log-Transformed and Encoded Visuals](visuals/correlation_heatmap_log_encoded.png)
   
   - **Visualization of Coordinates**:
   To investigate how geographical location influences house prices, a scatter plot of `latitude` versus `longitude` was created. This visualization aimed to identify any spatial patterns related to `median_house_value`. The scatter plot showed that higher house values (indicated by red) were concentrated along the coast, while lower house values (indicated by blue) were more frequently observed inland. This pattern corroborates the earlier findings from the correlation heatmap, highlighting the impact of geographical proximity to the coast on house prices.
@@ -249,7 +254,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
                   hue = 'median_house_value', palette='coolwarm')
   #red is touching the coast (more expensive), up and to the right is more inland
   ```
-  *show visual
+  ![Longitude vs Latitude](visuals/location_scatterplot.png)
   
   - **Feature Engineering**:
   New features were created to provide additional insights into the data. Specifically, the `bedroom_ratio` was calculated as the ratio of `total_bedrooms` to `total_rooms`, and `rooms_per_household` was derived as the ratio of `total_rooms` to the number of `households`.  These additional features were intended to provide more insightful information that could improve model performance.
@@ -258,6 +263,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   train_data['bedroom_ratio'] = train_data['total_bedrooms'] / train_data['total_rooms']
   train_data['rooms_per_household'] = train_data['total_rooms'] / train_data['households']
   ```
+  
   - **Correlation Heatmap with Engineered Features**:
    A new heatmap was created to visualize the correlations between the newly engineered features and the target variable. The updated correlations indicated that while some original features had relatively weak relationships with the target variable, the engineered features exhibited more significant correlations. Specifically:
     - `total_rooms` showed a correlation of 0.15 with median_house_value.
@@ -273,7 +279,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   plt.figure(figsize = (15,8))
   sns.heatmap(train_data.corr(), annot = True, cmap = "YlGnBu")
   ```
-  *show visual
+  ![Correlation Heatmap with Transformed, Encoded, and Engineered Variables](visuals/correlation_heatmap_log_encoded_engineered.png)
   
   - **Scaling Data**:
   To ensure that all features contributed equally to the model training, data scaling was performed. Scaling standardizes the range of the features, which is particularly important for algorithms that are sensitive to feature magnitudes.
@@ -291,6 +297,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   #scale the train data
   X_train_s = scaler.fit_transform(X_train)
   ```
+  
   - **Applying Preprocessing to Test Data**
   To maintain consistency, the same preprocessing steps were applied to the test data. This included joining X_test and y_test, applying log transformations, one-hot encoding the `ocean_proximity` column, adding the engineered features, and scaling the data.
 
@@ -486,8 +493,9 @@ A scatter plot is used to compare the predictions from the Linear Regression mod
   plt.tight_layout()
   plt.show()
   ```
-  *show visual
-  In the scatter plot, the Random Forest model (green dots) is noticeably tighter around the red dotted line, indicating a better fit compared to the Linear Regression model (blue dots). The Linear Regression model had some negative predicted values, reflecting a poor fit and potential issues with the model's assumptions. Both models struggled to provide accurate predictions for values close to $500,000, but the Random Forest model performed better in this range, demonstrating its robustness and improved prediction accuracy.
+  ![Predicted vs Actual](visuals/predicted_vs_actual.png)
+  
+In the scatter plot, the Random Forest model (green dots) is noticeably tighter around the red dotted line, indicating a better fit compared to the Linear Regression model (blue dots). The Linear Regression model had some negative predicted values, reflecting a poor fit and potential issues with the model's assumptions. Both models struggled to provide accurate predictions for values close to $500,000, but the Random Forest model performed better in this range, demonstrating its robustness and improved prediction accuracy.
 
 ## Feature Importance
 An analysis of feature importance was conducted using the Tuned Random Forest model to understand which features most significantly impacted the model’s predictions.
@@ -523,7 +531,7 @@ Overall, it was observed that **income**, **geographical location**, and **housi
   plt.tight_layout()
   plt.show()
   ```
-- *provide Visualization of feature importances
+  ![Initial Correlation Heatmap](visuals/feature_importances.png)
 
 ## Insights and Interpretations
 
