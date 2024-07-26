@@ -47,13 +47,22 @@ This project aimed to predict housing prices in California using machine learnin
 The goal of this project was to develop a robust predictive model for housing prices and derive actionable insights from the data. While the dataset represents historical housing conditions, the project demonstrated proficiency in data preprocessing, model building, and performance evaluation, providing a solid foundation for more complex real-world applications.
 
 ## Google Colab Notebook
-- [Link to the Google Colab Notebook](insert link here)
-This notebook contains the Python code used for the housing price prediction analysis in this project.
+[Link to the Google Colab Notebook](insert link here)
 
-The notebook includes data preprocessing steps, feature engineering, model development, and evaluation. It covers the implementation of both Linear Regression and Random Forest models, along with hyperparameter tuning and performance assessment. The notebook also features visualizations and insights related to predicting California housing prices based on 1990 data, helping to interpret the historical trends and understand the factors influencing housing values during that period.
+This notebook contains the Python code used for the housing price prediction analysis in this project. It includes:
+
+- Data preprocessing steps
+- Feature engineering
+- Model development and evaluation
+- Implementation of both Linear Regression and Random Forest models
+- Hyperparameter tuning and performance assessment
+- Visualizations and insights related to predicting California housing prices based on 1990 data
+
+The notebook provides a comprehensive overview of the analysis, helping to interpret historical trends and understand the factors influencing housing values during that period.
+
 
 ## Statistical Tools
-For the housing price prediction project, I utilized the following tools and platforms:
+For this housing price prediction project, I utilized the following tools and platforms:
 
 - **Python**: Employed for data preprocessing, feature engineering, model development, evaluation, and creating visualizations.
 - **Google Colab**: Used for its cloud-based Jupyter notebook environment, which facilitated efficient code execution and provided an accessible platform for potential collaboration.
@@ -65,7 +74,7 @@ For the housing price prediction project, I utilized the following tools and pla
 These tools and libraries were crucial for conducting a thorough analysis of housing prices, enabling effective data processing, modeling, and interpretation of results.
 
 ## Dataset Source
-The dataset used in this project is the California Housing Prices dataset, sourced from [Kaggle](https://www.kaggle.com/datasets). This dataset contains housing attributes from the 1990 California census and is employed to showcase proficiency in linear and nonlinear regression techniques.
+The dataset used in this project is the California Housing Prices dataset, sourced from [Kaggle](https://www.kaggle.com/datasets). This dataset contains housing attributes from the 1990 California census and was employed to showcase proficiency in linear and nonlinear regression techniques.
 
 ## Dataset Description
 **Dataset Overview:**
@@ -105,7 +114,7 @@ The dataset contains the following features:
 - **File Format**: CSV
 
 **Usage:**
-This dataset is employed to develop and evaluate predictive models for housing prices based on historical data from the 1990 California census. It helps in understanding how various features influence housing values and demonstrates the application of regression techniques in a real-world context.
+This dataset was employed to develop and evaluate predictive models for housing prices based on historical data from the 1990 California census. It helped in understanding how various features influenced housing values and demonstrated the application of regression techniques in a real-world context.
 
 **Notes:**
 - Missing values were addressed during preprocessing.
@@ -195,7 +204,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   ```
   *show visual
   - **Visualizing Distribution of Categorical Variable**:
-  Visualized the distribution of the ocean_proximity values to understand the frequency of each category.
+  Visualized the distribution of the `ocean_proximity` values to understand the frequency of each category.
   ```python
   #checked the distribution of categories
   train_data['ocean_proximity'].value_counts() #island has very few counts
@@ -224,7 +233,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   train_data = train_data.join(dummies).drop('ocean_proximity', axis = 1)
   ```
   - **Correlation Heatmap with One-Hot Encoded Variables**:
-  A new heatmap was generated to visualize the correlations between variables after applying one-hot encoding. The heatmap revealed that the ocean_proximity categories <1H OCEAN and INLAND had the strongest correlations with median_house_value, with coefficients of 0.25 and -0.48, respectively. This indicates that a house’s proximity to the ocean has a significant influence on its value, with houses closer to the ocean tending to have higher values, while inland houses tend to have lower values.
+  A new heatmap was generated to visualize the correlations between variables after applying one-hot encoding. The heatmap revealed that the `ocean_proximity` categories `<1H OCEAN` and `INLAND` had the strongest correlations with `median_house_value`, with coefficients of 0.25 and -0.48, respectively. This indicates that a house’s proximity to the ocean has a significant influence on its value, with houses closer to the ocean tending to have higher values, while inland houses tend to have lower values.
   ```python
   plt.figure(figsize = (15,8))
   sns.heatmap(train_data.corr(), annot = True, cmap = "YlGnBu")
@@ -266,7 +275,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   ```
   *show visual
   
-  - **Scaling Data**
+  - **Scaling Data**:
   To ensure that all features contributed equally to the model training, data scaling was performed. Scaling standardizes the range of the features, which is particularly important for algorithms that are sensitive to feature magnitudes.
 
     Since new features were added during previous steps, the dataset was re-split into feature variables (X_train) and the target variable (y_train). The StandardScaler was then applied to standardize the features in the training data. This process transforms the features so they have a mean of 0 and a standard deviation of 1, which helps in improving the performance and convergence of many machine learning algorithms.
@@ -284,6 +293,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   ```
   - **Applying Preprocessing to Test Data**
   To maintain consistency, the same preprocessing steps were applied to the test data. This included joining X_test and y_test, applying log transformations, one-hot encoding the `ocean_proximity` column, adding the engineered features, and scaling the data.
+
   ```python
   #join the data into a data frame
   test_data = X_test.join(y_test)
@@ -480,9 +490,16 @@ A scatter plot is used to compare the predictions from the Linear Regression mod
   In the scatter plot, the Random Forest model (green dots) is noticeably tighter around the red dotted line, indicating a better fit compared to the Linear Regression model (blue dots). The Linear Regression model had some negative predicted values, reflecting a poor fit and potential issues with the model's assumptions. Both models struggled to provide accurate predictions for values close to $500,000, but the Random Forest model performed better in this range, demonstrating its robustness and improved prediction accuracy.
 
 ## Feature Importance
-An analysis of feature importance was conducted using the Tuned Random Forest model. The feature importance scores were evaluated to understand which features most significantly impacted the model’s predictions.
+An analysis of feature importance was conducted using the Tuned Random Forest model to understand which features most significantly impacted the model’s predictions.
 
-The results indicated that `median_income` was the most important feature, with an importance score of approximately 0.50. Following `median_income`, `INLAND` had a notable importance score of around 0.15. `Longitude` and `latitude` each contributed with importance scores of about 0.10. `Housing_median_age` had a smaller, yet significant, importance score of around 0.06. The remaining features exhibited progressively smaller importance scores, indicating they had minimal impact on the model’s predictions. Overall, it was observed that income, geographical location, and housing age were the most influential factors affecting the model's predictions.*edit numbers later after running new code
+Key findings include:
+- `median_income`: The most important feature, with an importance score of approximately 0.50.
+- `INLAND`: The second most important feature, with a notable importance score of around 0.15.
+- `longitude` and `latitude`: Each contributed with importance scores of about 0.10.
+- `house_median_age`: Had a smaller yet significant importance score of around 0.06.
+- Remaining Features: Exhibited progressively smaller importance scores, indicating minimal impact on the model’s predictions.*edit bullet?
+
+Overall, it was observed that **income**, **geographical location**, and **housing age** were the most influential factors affecting the model's predictions.
 
   ```python
   # Access feature importances
@@ -560,23 +577,43 @@ The project met its objectives by demonstrating the effectiveness of machine lea
 *decide if whole section necessary or just edit it
 
 ## Limitations
-- Limitations encountered during the analysis
-- Challenges faced and their impact on the results
+
+- **Dataset Limitations**: The dataset reflects historical housing conditions from the 1990s, which may not accurately represent current market trends and conditions. This historical perspective limits the model's applicability to present-day housing prices.
+
+- **Feature Selection**: Feature selection was not performed before model training. The inclusion of irrelevant or redundant features could have impacted model performance and the overall accuracy of the predictions.
+
+- **Outlier Management**: The analysis did not include outlier reduction or imputation. Outliers can significantly impact model performance, and addressing them might have improved the robustness and accuracy of the models. Handling outliers through techniques such as removal or transformation could have provided a more accurate representation of the data.
+
+- **Data Transformation**: The analysis included log transformations on four variables, but other variables were not transformed. Additional transformations could have been beneficial. For instance, `longitude` and `latitude` exhibited bimodal distributions, and applying appropriate transformations to these variables might have improved model performance by addressing non-normal distributions and feature scales.
+
+- **Preprocessing Functions**: Preprocessing steps applied to the training data were manually repeated for the test data. This approach is time-consuming and could lead to inconsistencies. Turning these steps into reusable functions would enhance efficiency and reproducibility.
+
+- **Model Assumptions**: The assumptions of Linear Regression, including linearity, independence, and homoscedasticity, may not have been fully met. This could affect the validity and reliability of the Linear Regression model.
+
+- **Computational Constraints**: RandomizedSearchCV was executed with a subset of the training data to manage computational constraints. A more extensive search with the full dataset might have yielded different results and potentially improved the model’s performance.
 
 ## Future Steps
-- Suggestions for further improvements
-- Potential extensions and additional analyses
+
+- **Feature Engineering and Selection**: Explore additional feature engineering techniques to create new features that could enhance model performance. Conduct feature selection to identify and retain the most relevant variables, potentially improving model accuracy and reducing complexity.
+
+- **Outlier Analysis and Handling**: Implement methods to detect, analyze, and manage outliers. This could involve using statistical techniques or visualizations to better understand and address the impact of outliers on model performance.
+
+- **Data Transformation**: Extend preprocessing by applying appropriate transformations to variables with non-normal or bimodal distributions. For instance, log transformations were applied to some features, but other variables, such as `longitude` and `latitude`, which exhibited bimodal distributions, might have benefited from further transformations or advanced techniques like Box-Cox or power transformations.
+
+- **Reusable Preprocessing Functions**: Develop reusable functions for preprocessing steps to ensure consistency and efficiency. Automating these steps will help manage data preparation more effectively and reduce the risk of errors when applying transformations to new data.
+
+- **Model Comparison and Ensemble Methods**: Evaluate additional machine learning models and ensemble methods, such as Gradient Boosting or XGBoost, to compare their performance with the current models. Combining models using ensemble techniques could lead to more robust predictions.
+
+- **Real-Time Data Integration**: Consider incorporating real-time data or more recent datasets to ensure the model remains relevant and accurate for current housing market conditions. This would involve continuous updating and retraining of the model with new data.
+
+- **Hyperparameter Optimization Enhancements**: Experiment with advanced hyperparameter optimization techniques, such as Bayesian optimization, to potentially achieve better model performance and efficiency compared to RandomizedSearchCV.
 
 ## Acknowledgements
-- Credits to any resources, libraries, or individuals who contributed to the project
+
+I would like to express my gratitude to [YouTube Tutorial Creator’s Name or Channel] for their invaluable tutorial*link, which provided the initial inspiration for analyzing the California Housing Prices dataset. While the tutorial helped me get started and offered foundational insights into Random Forest modeling, I conducted the analysis and implemented the models independently, tailoring the techniques to fit the specific needs of this project. Their(their name) comprehensive and insightful content greatly contributed to the success of this analysis.
 
 ## Project Summary
 
-This project aimed to predict housing prices in California using historical data and machine learning models. Key goals included data exploration, model development, hyperparameter tuning, and visualization. The analysis demonstrated the effectiveness of the Tuned Random Forest model over the Linear Regression and base Random Forest models, providing valuable insights into feature importance and model performance. The project highlighted the importance of feature selection and model tuning in developing accurate predictive models.*do i need this
+This project aimed to predict housing prices in California using machine learning models on historical data from the 1990 census. Through data exploration, model development, hyperparameter tuning, and visualization, the analysis revealed that the Tuned Random Forest model outperformed both the Linear Regression and base Random Forest models. Significant insights were gained into the importance of features such as median income, geographical location, and housing age in predicting housing prices. While the project successfully developed an accurate predictive model, it also identified several areas for future improvement, including feature selection, advanced data transformation, and handling outliers. Overall, the project showcased the application of machine learning techniques in real estate price prediction and provided a foundation for further refinement and enhancement.
 
-## Requirements
-- Python 3.x
-- Libraries: pandas, numpy, matplotlib, scikit-learn, [other libraries used]
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
