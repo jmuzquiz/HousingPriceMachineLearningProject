@@ -3,18 +3,20 @@
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Google Colab Notebook](#google-colab-notebook)
-- [Data Description](#data-description)
+- [Statistical Tools](#statistical-tools)
 - [Dataset Source](#dataset-source)
-- [Data Preprocessing](#data-preprocessing)
-- [Exploratory Data Analysis](#exploratory-data-analysis)
+- [Data Description](#data-description)
+- [Data Preprocessing and Exploration](#data-preprocessing-and-exploration)
 - [Model Training](#model-training)
   - [Linear Regression](#linear-regression)
   - [Random Forest](#random-forest)
 - [Hyperparameter Tuning](#hyperparameter-tuning)
 - [Model Evaluation](#model-evaluation)
+  - [Comparison of R^2, RMSE, and MAE Metrics](#comparison-of-r2-rmse-and-mae-metrics)
+  - [Comparison of Predicted vs Actual Values](comparison-of-predicted-vs-actual-values)
 - [Feature Importance](#feature-importance)
-- [Visualizations](#visualizations)
 - [Insights and Interpretations](#insights-and-interpretations)
+  - [Key Findings from Model Predictions]
 - [Project Goals Met](#project-goals-met)
 - [Limitations](#limitations)
 - [Future Steps](#future-steps)
@@ -181,34 +183,90 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
     - **0** indicates no linear relationship.
 
     In this analysis, `median_income` emerged as the most positively correlated with `median_house_value`, with a correlation coefficient of 0.69. This suggests that the income level of the area plays a significant role in determining housing prices. Other notable correlations include `latitude`, which had a negative correlation of -0.14, indicating that houses located further north tend to have lower values, and `total_rooms`, which showed a positive correlation of 0.14, suggesting that more rooms are associated with higher house values.
+    The heatmap below highlights the target variable, `median_house_value`, in red for easy identification. This visual emphasis helps in quickly identifying the strength of correlations between median_house_value and other variables. Note that the target variable will be consistently highlighted in red in subsequent heatmaps for uniformity and ease of comparison.
 
   ```python
   #now do correlations with target variable
-  numerical_train_data = train_data.select_dtypes(include = np.number)
+  # Select only numerical columns
+  numerical_train_data = train_data.select_dtypes(include=np.number)
+  
+  # Calculate the correlation matrix
   correlation_matrix = numerical_train_data.corr()
-  plt.figure(figsize = (15,8))
-  sns.heatmap(correlation_matrix, annot = True, cmap = "YlGnBu")
+  
+  # Create the heatmap
+  plt.figure(figsize=(15, 8))
+  heatmap = sns.heatmap(correlation_matrix, annot=True, cmap="YlGnBu",
+  cbar_kws={'label': 'Correlation Coefficient'})
+  
+  # Customize the x and y axis tick labels
+  for tick_label in heatmap.get_xticklabels():
+      if tick_label.get_text() == 'median_house_value':
+          tick_label.set_color('red')
+  
+  for tick_label in heatmap.get_yticklabels():
+      if tick_label.get_text() == 'median_house_value':
+          tick_label.set_color('red')
+  
+  # Adjust the layout to make sure everything fits
+  plt.tight_layout()
+  
+  # Show the heatmap
+  plt.show()
   ```
   ![Initial Correlation Heatmap](visuals/corr_heatmap.png)
 
   - **Log Transformation of Variables**:
   Applied log transformations to several numerical variables to address right-skewed distributions. Log transformations are often used to normalize skewed data, making it more suitable for modeling. Adding 1 to the values before transformation avoids taking the logarithm of zero, which is undefined.
 
-    After applying the transformations, the histograms of the affected variables displayed more normalized distributions, indicating a reduction in skewness. This normalization helps improve the performance and reliability of statistical and machine learning models.
   ```python
+  #first show the 4
+  # Specify the columns you want to plot
+  columns_to_plot = ['total_rooms', 'total_bedrooms', 'population', 'households']
+  
+  # Plot histograms for the specified columns
+  axes = train_data[columns_to_plot].hist(figsize=(15, 8))
+  
+  # Set title and label sizes
+  for ax in axes.flatten():
+      ax.title.set_fontsize(22)  # Set the title font size
+      ax.set_xlabel('Value', fontsize=14)  # Set the x-axis label
+      ax.set_ylabel('Frequency', fontsize=14)  # Set the y-axis label
+  
+  plt.tight_layout()
+  plt.show()
+  
   #many hists are right-skewed (take log)
   train_data['total_rooms'] = np.log(train_data['total_rooms'] +1) #+1 to avoid zero values
   train_data['total_bedrooms'] = np.log(train_data['total_bedrooms'] +1)
   train_data['population'] = np.log(train_data['population'] +1)
   train_data['households'] = np.log(train_data['households'] +1)
 
-  train_data.hist(figsize = (15,8)) #the transformed 4 variables look more normal now
+  #the transformed 4 variables look more normal now
+  # Specify the columns you want to plot
+  columns_to_plot = ['total_rooms', 'total_bedrooms', 'population', 'households']
+  
+  # Plot histograms for the specified columns
+  axes = train_data[columns_to_plot].hist(figsize=(15, 8))
+  
+  # Set title and label sizes
+  for ax in axes.flatten():
+      ax.title.set_fontsize(22)  # Set the title font size
+      ax.set_xlabel('Value', fontsize=14)  # Set the x-axis label
+      ax.set_ylabel('Frequency', fontsize=14)  # Set the y-axis label
+  
+  plt.tight_layout()
+  plt.show()
   ```
+    Displayed below are the histograms of the original variables:*this isnt aligned
   ![Original Histograms](visuals/four_histograms.png)
+    The original histograms for `total_rooms`, `total_bedrooms`, `population`, and `households` show that these variables were all heavily right-skewed. Right-skewed distributions can negatively impact the performance of statistical and machine learning models by violating assumptions of normality and homoscedasticity.
+
+    After applying log transformations to these variables, their histograms displayed more normalized distributions, as shown below:
   ![Log Transformed Histograms](visuals/four_histograms_log.png)
+    These transformations helped to reduce skewness, resulting in distributions that are closer to normal. This normalization is crucial as it can improve the performance and reliability of the models by ensuring that the data meets the assumptions required for many statistical and machine learning techniques.
   
   - **Visualizing Distribution of Categorical Variable**:
-  Visualized the distribution of the `ocean_proximity` values to understand the frequency of each category.
+  Visualized the distribution of the `ocean_proximity` categorical variable to understand the frequency of each category. The category `ISLAND` has a very low count (only 4 occurrences), making it virtually invisible in the bar graph. In contrast, the other categories have significantly higher counts, with the highest category `<1H OCEAN` reaching 7,261 occurrences.
   ```python
   #checked the distribution of categories
   train_data['ocean_proximity'].value_counts() #island has very few counts
@@ -217,9 +275,14 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   plt.xlabel('Ocean Proximity')
   plt.ylabel('Count')
   plt.title('Distribution of Ocean Proximity')
+  # Adjust the layout to make sure everything fits
+  plt.tight_layout()
   plt.show()
+
+  #check how many counts island has since not visible in visual
+  train_data['ocean_proximity'].value_counts() #island has 4 counts
   ```
-  ![Ocean Proximity Count](visuals/ocean_proximity_count.png)
+  ![Ocean Proximity Count](visuals/ocean_proximity_bar.png)
   
   - **Applying One-Hot Encoding**:
   Applied one-hot encoding to the `ocean_proximity` variable to convert it into a format suitable for machine learning models. This process includes creating binary columns for each category.
@@ -238,12 +301,29 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   ```
   
   - **Correlation Heatmap with One-Hot Encoded Variables**:
-  A new heatmap was generated to visualize the correlations between variables after applying one-hot encoding. The heatmap revealed that the `ocean_proximity` categories `<1H OCEAN` and `INLAND` had the strongest correlations with `median_house_value`, with coefficients of 0.25 and -0.48, respectively. This indicates that a house’s proximity to the ocean has a significant influence on its value, with houses closer to the ocean tending to have higher values, while inland houses tend to have lower values.
+  A new heatmap was generated to visualize the correlations between variables after applying one-hot encoding. The heatmap revealed that the `ocean_proximity` categories `<1H OCEAN` and `INLAND` had the strongest correlations with `median_house_value`, with coefficients of 0.26 and -0.48, respectively. This indicates that a house’s proximity to the ocean has a significant influence on its value, with houses closer to the ocean tending to have higher values, while inland houses tend to have lower values.
   ```python
-  plt.figure(figsize = (15,8))
-  sns.heatmap(train_data.corr(), annot = True, cmap = "YlGnBu")
+  # Create the heatmap
+  plt.figure(figsize=(15, 8))
+  heatmap = sns.heatmap(train_data.corr(), annot=True, cmap="YlGnBu",
+  cbar_kws={'label': 'Correlation Coefficient'})
+  
+  # Customize the x and y axis tick labels
+  for tick_label in heatmap.get_xticklabels():
+      if tick_label.get_text() == 'median_house_value':
+          tick_label.set_color('red')
+  
+  for tick_label in heatmap.get_yticklabels():
+      if tick_label.get_text() == 'median_house_value':
+          tick_label.set_color('red')
+  
+  # Adjust the layout to make sure everything fits
+  plt.tight_layout()
+  
+  # Show the heatmap
+  plt.show()
   ```
-  ![Correlation Heatmap with Log-Transformed and Encoded Visuals](visuals/correlation_heatmap_log_encoded.png)
+  ![Correlation Heatmap with Log-Transformed and Encoded Visuals](visuals/corr_heatmap_log_encoded.png)
   
   - **Visualization of Coordinates**:
   To investigate how geographical location influences house prices, a scatter plot of `latitude` versus `longitude` was created. This visualization aimed to identify any spatial patterns related to `median_house_value`. The scatter plot showed that higher house values (indicated by red) were concentrated along the coast, while lower house values (indicated by blue) were more frequently observed inland. This pattern corroborates the earlier findings from the correlation heatmap, highlighting the impact of geographical proximity to the coast on house prices.
@@ -252,6 +332,14 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   plt.figure(figsize = (15,8))
   sns.scatterplot(x = 'latitude', y = 'longitude', data = train_data, 
                   hue = 'median_house_value', palette='coolwarm')
+  # Set the x and y labels with larger font size
+  plt.xlabel('Latitude', fontsize=16)
+  plt.ylabel('Longitude', fontsize=16)
+  plt.title('Latitude vs. Longitude with Median House Value', fontsize=20)
+  
+  # Adjust the layout to make sure everything fits
+  plt.tight_layout()
+  plt.show()
   #red is touching the coast (more expensive), up and to the right is more inland
   ```
   ![Longitude vs Latitude](visuals/location_scatterplot.png)
@@ -266,20 +354,36 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   
   - **Correlation Heatmap with Engineered Features**:
    A new heatmap was created to visualize the correlations between the newly engineered features and the target variable. The updated correlations indicated that while some original features had relatively weak relationships with the target variable, the engineered features exhibited more significant correlations. Specifically:
-    - `total_rooms` showed a correlation of 0.15 with median_house_value.
-    - `total_bedrooms` had a correlation of 0.048.
+    - `total_rooms` showed a correlation of 0.16 with median_house_value.
+    - `total_bedrooms` had a correlation of 0.054.
     - `bedroom_ratio` had a correlation of -0.20, suggesting that houses with a higher proportion of bedrooms relative to total rooms, possibly due to conversions of other spaces into bedrooms, might influence home values.
-    - `households` showed a correlation of 0.067.
-    - `rooms_per_household` had a correlation of 0.11.
+    - `households` showed a correlation of 0.073.
+    - `rooms_per_household` had a correlation of 0.12.
       
     These observations suggest that the engineered features, particularly bedroom_ratio, might better capture aspects of the housing data that affect values, such as the impact of converted rooms or garages on home prices.
 
   ```python
   #correlation heatmap with newly engineered features
   plt.figure(figsize = (15,8))
-  sns.heatmap(train_data.corr(), annot = True, cmap = "YlGnBu")
+  heatmap = sns.heatmap(train_data.corr(), annot=True, cmap="YlGnBu",
+  cbar_kws={'label': 'Correlation Coefficient'})
+
+  # Customize the x and y axis tick labels
+  for tick_label in heatmap.get_xticklabels():
+      if tick_label.get_text() == 'median_house_value':
+          tick_label.set_color('red')
+  
+  for tick_label in heatmap.get_yticklabels():
+      if tick_label.get_text() == 'median_house_value':
+          tick_label.set_color('red')
+  
+  # Adjust the layout to make sure everything fits
+  plt.tight_layout()
+  
+  # Show the heatmap
+  plt.show()
   ```
-  ![Correlation Heatmap with Transformed, Encoded, and Engineered Variables](visuals/correlation_heatmap_log_encoded_engineered.png)
+  ![Correlation Heatmap with Transformed, Encoded, and Engineered Variables](visuals/corr_heatmap_log_encoded_engineered.png)
   
   - **Scaling Data**:
   To ensure that all features contributed equally to the model training, data scaling was performed. Scaling standardizes the range of the features, which is particularly important for algorithms that are sensitive to feature magnitudes.
@@ -454,15 +558,16 @@ To evaluate the models, we compared the R-squared (R^2), Root Mean Squared Error
   
   print(results)
   ```
-  | Model               | R^2     | RMSE         | MAE          |
+| Model               | R^2     | RMSE         | MAE          |
 |---------------------|---------|--------------|--------------|
-| Linear Regression   | 0.664534 | 67009.934348 | 48184.906111 |
-| Base Random Forest  | 0.817624 | 49408.229449 | 32253.651816 |
-| Tuned Random Forest | 0.819550 | 49146.661813 | 32085.596838 |
+| Linear Regression   | 0.655032 | 67787.206688 | 48528.442689 |
+| Base Random Forest  | 0.806115 | 50819.506353 | 32871.983496 |
+| Tuned Random Forest | 0.810007 | 50306.886923 | 32503.304391 |
+
 
 Based on these metrics, the Tuned Random Forest model is the best performer. It has the highest R^2 value, indicating the best fit to the data. Additionally, it has the lowest RMSE and MAE values, showing that it makes the most accurate predictions on average and has the smallest average prediction error. Therefore, the Tuned Random Forest model is the most accurate and reliable model for predicting housing prices in this dataset.
 
-### Comparison of Predicted vs. Actual Values
+### Comparison of Predicted vs Actual Values
 This section visualizes the predicted values against the actual values for both the Linear Regression and the Tuned Random Forest models. The goal is to assess how well each model's predictions match the true house prices.
 
 A scatter plot is used to compare the predictions from the Linear Regression model and the Tuned Random Forest model. In these plots, each point represents a single house, with its position determined by the actual price and the predicted price from the respective model. The red dashed line represents the line of perfect prediction, where the predicted values perfectly match the actual values.*fix tense in many sections?
@@ -501,11 +606,11 @@ In the scatter plot, the Random Forest model (green dots) is noticeably tighter 
 An analysis of feature importance was conducted using the Tuned Random Forest model to understand which features most significantly impacted the model’s predictions.
 
 Key findings include:
-- `median_income`: The most important feature, with an importance score of approximately 0.50.
-- `INLAND`: The second most important feature, with a notable importance score of around 0.15.
-- `longitude` and `latitude`: Each contributed with importance scores of about 0.10.
-- `house_median_age`: Had a smaller yet significant importance score of around 0.06.
-- Remaining Features: Exhibited progressively smaller importance scores, indicating minimal impact on the model’s predictions.*edit bullet?
+- `median_income`: The most important feature, with an importance score of 0.49.
+- `INLAND`: The second most influential feature, with an importance score of 0.14.
+- `longitude` and `latitude`: Contributed with importance scores of 0.09 and 0.08, respectively.
+- `house_median_age`: Had a smaller yet significant importance score of 0.05.
+- **Remaining Features**: Exhibited progressively smaller importance scores, indicating minimal impact on the model’s predictions.*edit bullet?
 
 Overall, it was observed that **income**, **geographical location**, and **housing age** were the most influential factors affecting the model's predictions.
 
@@ -523,13 +628,25 @@ Overall, it was observed that **income**, **geographical location**, and **housi
   import matplotlib.pyplot as plt
   
   plt.figure(figsize=(10, 6))
-  sorted_importances.plot(kind='barh', color='blue')
+  sorted_importances.plot(kind='barh', color='#4682B4')
   plt.title('Feature Importances - Random Forest')
   plt.xlabel('Importance')
   plt.ylabel('Feature')
   plt.gca().invert_yaxis() #reverse y-axis order to have most important at top
   plt.tight_layout()
   plt.show()
+
+  #code to get the actual importance numbers
+  # Access feature importances
+  importances = best_forest.feature_importances_
+  
+  # Match importances to features
+  feature_names = X_train.columns  # Use X_train directly if it has the correct column names
+  feature_importances = pd.Series(importances, index=feature_names)
+  
+  # Sort and display the top features with their importance scores
+  sorted_importances = feature_importances.sort_values(ascending=False)
+  print(sorted_importances)
   ```
   ![Initial Correlation Heatmap](visuals/feature_importances.png)
 
@@ -537,14 +654,14 @@ Overall, it was observed that **income**, **geographical location**, and **housi
 
 ### Key Findings from Model Predictions
 
-- **Model Performance**: The Tuned Random Forest model outperformed the Linear Regression model in terms of R², RMSE, and MAE. The R² score of the Tuned Random Forest was approximately 0.82, indicating a better fit to the data compared to Linear Regression, which had an R² score of 0.66. This suggests that the Random Forest model more effectively captured the complexities and interactions in the data.
+- **Model Performance**: The Tuned Random Forest model outperformed the Linear Regression model in terms of R², RMSE, and MAE. The R² score of the Tuned Random Forest was approximately 0.81, indicating a better fit to the data compared to Linear Regression, which had an R² score of 0.66. This suggests that the Random Forest model more effectively captured the complexities and interactions in the data.
 - **Prediction Accuracy**: Both models struggled with accurate predictions for home values around $500,000, but the Tuned Random Forest model provided more reliable estimates in this range compared to the Linear Regression model. The Random Forest model demonstrated its robustness in handling diverse data patterns and outliers.
 
 ### Insights into Feature Relationships
 
-- **Median Income**: The analysis revealed that `median_income` was the most influential feature, with an importance score of approximately 0.50. This indicates that income levels are a strong predictor of house prices, highlighting the economic significance of income in determining property values.
-- **Geographical Factors**: Features related to location, such as `INLAND`, `longitude`, and `latitude`, played a substantial role in predicting house prices. The `INLAND` feature, with an importance score of around 0.15, suggests that proximity to the coast has a notable impact on home values. Houses closer to the coast tend to have higher values, reflecting the desirability of coastal locations.
-- **Housing Age**: `housing_median_age` had a smaller yet significant impact with an importance score of about 0.06. This indicates that the age of a property can influence its value, though to a lesser extent compared to income and location.
+- **Median Income**: The analysis revealed that `median_income` was the most influential feature, with an importance score of 0.49. This indicates that income levels are a strong predictor of house prices, highlighting the economic significance of income in determining property values.
+- **Geographical Factors**: Features related to location, such as `INLAND`, `longitude`, and `latitude`, played a substantial role in predicting house prices. The `INLAND` feature, with an importance score of 0.14, suggests that proximity to the coast has a notable impact on home values. Houses closer to the coast tend to have higher values, reflecting the desirability of coastal locations.
+- **Housing Age**: `housing_median_age` had a smaller yet significant impact with an importance score of 0.05. This indicates that the age of a property can influence its value, though to a lesser extent compared to income and location.
 - **Feature Engineering Impact**: The addition of engineered features, such as `bedroom_ratio` and `rooms_per_household`, provided more granular insights into how room distribution and household size affect house prices. For example, `bedroom_ratio` can capture the effect of room or garage conversions on home values, adding another layer of understanding to property pricing.
 
 ### Practical Implications for Business
