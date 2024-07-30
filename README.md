@@ -189,7 +189,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   plt.figure(figsize = (15,8))
   sns.heatmap(correlation_matrix, annot = True, cmap = "YlGnBu")
   ```
-  ![Initial Correlation Heatmap](visuals/correlation_heatmap.png)
+  ![Initial Correlation Heatmap](visuals/corr_heatmap.png)
 
   - **Log Transformation of Variables**:
   Applied log transformations to several numerical variables to address right-skewed distributions. Log transformations are often used to normalize skewed data, making it more suitable for modeling. Adding 1 to the values before transformation avoids taking the logarithm of zero, which is undefined.
