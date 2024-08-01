@@ -52,7 +52,7 @@ This project aimed to predict housing prices in California using machine learnin
 The goal of this project was to develop a robust predictive model for housing prices and derive actionable insights from the data. While the dataset represents historical housing conditions, the project demonstrated proficiency in data preprocessing, model building, and performance evaluation, providing a solid foundation for more complex real-world applications.
 
 ## Google Colab Notebook
-[Link to the Google Colab Notebook](insert link here)
+[Link to the Google Colab Notebook](https://colab.research.google.com/drive/1tbZNVhZe6XgBUQ2yG6bQDv7QzqFRVDVa?usp=sharing)
 
 This notebook contains the Python code used for the housing price prediction analysis in this project. It includes:
 
@@ -79,7 +79,7 @@ For this housing price prediction project, I utilized the following tools and pl
 These tools and libraries were crucial for conducting a thorough analysis of housing prices, enabling effective data processing, modeling, and interpretation of results.
 
 ## Dataset Source
-The dataset used in this project is the California Housing Prices dataset, sourced from [Kaggle](https://www.kaggle.com/datasets). This dataset contains housing attributes from the 1990 California census and was employed to showcase proficiency in linear and nonlinear regression techniques.
+The dataset used in this project is the California Housing Prices dataset, sourced from [Kaggle](https://www.kaggle.com/datasets/camnugent/california-housing-prices). This dataset contains housing attributes from the 1990 California census and was employed to showcase proficiency in linear and nonlinear regression techniques.
 
 ## Dataset Description
 **Dataset Overview:**
@@ -186,22 +186,22 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
     - **0** indicates no linear relationship.
 
     In this analysis, `median_income` emerged as the most positively correlated with `median_house_value`, with a correlation coefficient of 0.69. This suggests that the income level of the area plays a significant role in determining housing prices. Other notable correlations include `latitude`, which had a negative correlation of -0.14, indicating that houses located further north tend to have lower values, and `total_rooms`, which showed a positive correlation of 0.14, suggesting that more rooms are associated with higher house values.
-    The heatmap below highlights the target variable, `median_house_value`, in red for easy identification. This visual emphasis helps in quickly identifying the strength of correlations between median_house_value and other variables. Note that the target variable will be consistently highlighted in red in subsequent heatmaps for uniformity and ease of comparison.
+    The heatmap below highlights the target variable, `median_house_value`, in red for easy identification. This visual emphasis helps in quickly identifying the strength of correlations between `median_house_value` and other variables. Note that the target variable will be consistently highlighted in red in subsequent heatmaps for uniformity and ease of comparison.
 
   ```python
-  #now do correlations with target variable
-  # Select only numerical columns
+  #select only numerical columns
   numerical_train_data = train_data.select_dtypes(include=np.number)
   
-  # Calculate the correlation matrix
+  #calculate the correlation matrix
   correlation_matrix = numerical_train_data.corr()
   
-  # Create the heatmap
+  #create the heatmap
   plt.figure(figsize=(15, 8))
   heatmap = sns.heatmap(correlation_matrix, annot=True, cmap="YlGnBu",
   cbar_kws={'label': 'Correlation Coefficient'})
   
-  # Customize the x and y axis tick labels
+  #customize the x and y axis tick labels
+  #this makes median_house_value show in red
   for tick_label in heatmap.get_xticklabels():
       if tick_label.get_text() == 'median_house_value':
           tick_label.set_color('red')
@@ -210,10 +210,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
       if tick_label.get_text() == 'median_house_value':
           tick_label.set_color('red')
   
-  # Adjust the layout to make sure everything fits
   plt.tight_layout()
-  
-  # Show the heatmap
   plt.show()
   ```
   ![Initial Correlation Heatmap](visuals/corr_heatmap.png)
@@ -222,18 +219,17 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   Applied log transformations to several numerical variables to address right-skewed distributions. Log transformations are often used to normalize skewed data, making it more suitable for modeling. Adding 1 to the values before transformation avoids taking the logarithm of zero, which is undefined.
 
   ```python
-  #first show the 4
-  # Specify the columns you want to plot
+  #four columns that will need to be log transformed later
   columns_to_plot = ['total_rooms', 'total_bedrooms', 'population', 'households']
   
-  # Plot histograms for the specified columns
+  #plot histograms for the specified columns
   axes = train_data[columns_to_plot].hist(figsize=(15, 8))
   
-  # Set title and label sizes
+  #set title and label sizes
   for ax in axes.flatten():
-      ax.title.set_fontsize(22)  # Set the title font size
-      ax.set_xlabel('Value', fontsize=14)  # Set the x-axis label
-      ax.set_ylabel('Frequency', fontsize=14)  # Set the y-axis label
+      ax.title.set_fontsize(22) 
+      ax.set_xlabel('Value', fontsize=14) 
+      ax.set_ylabel('Frequency', fontsize=14) 
   
   plt.tight_layout()
   plt.show()
@@ -244,23 +240,23 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   train_data['population'] = np.log(train_data['population'] +1)
   train_data['households'] = np.log(train_data['households'] +1)
 
-  #the transformed 4 variables look more normal now
-  # Specify the columns you want to plot
+  #the log transformed variables look more normal now
+  #the four transformed columns
   columns_to_plot = ['total_rooms', 'total_bedrooms', 'population', 'households']
   
-  # Plot histograms for the specified columns
+  #plot histograms for the specified columns after transformation
   axes = train_data[columns_to_plot].hist(figsize=(15, 8))
   
-  # Set title and label sizes
+  #set title and label sizes
   for ax in axes.flatten():
-      ax.title.set_fontsize(22)  # Set the title font size
-      ax.set_xlabel('Value', fontsize=14)  # Set the x-axis label
-      ax.set_ylabel('Frequency', fontsize=14)  # Set the y-axis label
+      ax.title.set_fontsize(22) 
+      ax.set_xlabel('Value', fontsize=14) 
+      ax.set_ylabel('Frequency', fontsize=14) 
   
   plt.tight_layout()
   plt.show()
   ```
-    Displayed below are the histograms of the original variables:*this isnt aligned
+    Displayed below are the histograms of the original variables:
   ![Original Histograms](visuals/four_histograms.png)
     The original histograms for `total_rooms`, `total_bedrooms`, `population`, and `households` show that these variables were all heavily right-skewed. Right-skewed distributions can negatively impact the performance of statistical and machine learning models by violating assumptions of normality and homoscedasticity.
 
@@ -272,13 +268,10 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   Visualized the distribution of the `ocean_proximity` categorical variable to understand the frequency of each category. The category `ISLAND` has a very low count (only 4 occurrences), making it virtually invisible in the bar graph. In contrast, the other categories have significantly higher counts, with the highest category `<1H OCEAN` reaching 7,261 occurrences.
   ```python
   #checked the distribution of categories
-  train_data['ocean_proximity'].value_counts() #island has very few counts
-  #visualizing the value_counts
   train_data['ocean_proximity'].value_counts().plot(kind='bar')
   plt.xlabel('Ocean Proximity')
   plt.ylabel('Count')
   plt.title('Distribution of Ocean Proximity')
-  # Adjust the layout to make sure everything fits
   plt.tight_layout()
   plt.show()
 
@@ -306,12 +299,13 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   - **Correlation Heatmap with One-Hot Encoded Variables**:
   A new heatmap was generated to visualize the correlations between variables after applying one-hot encoding. The heatmap revealed that the `ocean_proximity` categories `<1H OCEAN` and `INLAND` had the strongest correlations with `median_house_value`, with coefficients of 0.26 and -0.48, respectively. This indicates that a house’s proximity to the ocean has a significant influence on its value, with houses closer to the ocean tending to have higher values, while inland houses tend to have lower values.
   ```python
-  # Create the heatmap
+  #create the heatmap
   plt.figure(figsize=(15, 8))
   heatmap = sns.heatmap(train_data.corr(), annot=True, cmap="YlGnBu",
   cbar_kws={'label': 'Correlation Coefficient'})
   
-  # Customize the x and y axis tick labels
+  #customize the x and y axis tick labels
+  #this makes median_house_value label red again
   for tick_label in heatmap.get_xticklabels():
       if tick_label.get_text() == 'median_house_value':
           tick_label.set_color('red')
@@ -320,10 +314,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
       if tick_label.get_text() == 'median_house_value':
           tick_label.set_color('red')
   
-  # Adjust the layout to make sure everything fits
   plt.tight_layout()
-  
-  # Show the heatmap
   plt.show()
   ```
   ![Correlation Heatmap with Log-Transformed and Encoded Visuals](visuals/corr_heatmap_log_encoded.png)
@@ -331,19 +322,19 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   - **Visualization of Coordinates**:
   To investigate how geographical location influences house prices, a scatter plot of `latitude` versus `longitude` was created. This visualization aimed to identify any spatial patterns related to `median_house_value`. The scatter plot showed that higher house values (indicated by red) were concentrated along the coast, while lower house values (indicated by blue) were more frequently observed inland. This pattern corroborates the earlier findings from the correlation heatmap, highlighting the impact of geographical proximity to the coast on house prices.
   ```python
-  #visualization of the coordinates first
-  plt.figure(figsize = (15,8))
-  sns.scatterplot(x = 'latitude', y = 'longitude', data = train_data, 
+  #visualization of the coordinates
+  plt.figure(figsize = (12,8))
+  sns.scatterplot(x = 'latitude', y = 'longitude', data = train_data,
                   hue = 'median_house_value', palette='coolwarm')
-  # Set the x and y labels with larger font size
+  #set the x and y labels and title font size
   plt.xlabel('Latitude', fontsize=16)
   plt.ylabel('Longitude', fontsize=16)
   plt.title('Latitude vs. Longitude with Median House Value', fontsize=20)
   
-  # Adjust the layout to make sure everything fits
   plt.tight_layout()
   plt.show()
-  #red is touching the coast (more expensive), up and to the right is more inland
+  #red is touching the coast (more expensive)
+  #blue housing is more inland (less expensive)
   ```
   ![Longitude vs Latitude](visuals/location_scatterplot.png)
   
@@ -363,15 +354,16 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
     - `households` showed a correlation of 0.073.
     - `rooms_per_household` had a correlation of 0.12.
       
-    These observations suggest that the engineered features, particularly bedroom_ratio, might better capture aspects of the housing data that affect values, such as the impact of converted rooms or garages on home prices.
+    These observations suggest that the engineered features, particularly `bedroom_ratio`, might better capture aspects of the housing data that affect values, such as the impact of converted rooms or garages on home prices.
 
   ```python
-  #correlation heatmap with newly engineered features
-  plt.figure(figsize = (15,8))
-  heatmap = sns.heatmap(train_data.corr(), annot=True, cmap="YlGnBu",
-  cbar_kws={'label': 'Correlation Coefficient'})
-
-  # Customize the x and y axis tick labels
+  #third and final heatmap with log transformed, one hot encoded, and engineered features
+  #create the heatmap
+  plt.figure(figsize=(15, 8))
+  heatmap = sns.heatmap(train_data.corr(), annot=True, cmap="YlGnBu", cbar_kws={'label': 'Correlation Coefficient'})
+  
+  #customize the x and y axis tick labels
+  #this makes median_house_value label red again
   for tick_label in heatmap.get_xticklabels():
       if tick_label.get_text() == 'median_house_value':
           tick_label.set_color('red')
@@ -380,10 +372,7 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
       if tick_label.get_text() == 'median_house_value':
           tick_label.set_color('red')
   
-  # Adjust the layout to make sure everything fits
   plt.tight_layout()
-  
-  # Show the heatmap
   plt.show()
   ```
   ![Correlation Heatmap with Transformed, Encoded, and Engineered Variables](visuals/corr_heatmap_log_encoded_engineered.png)
@@ -438,19 +427,22 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
 
 ## Model Training
 ### Linear Regression
-- Implemented and evaluated a Linear Regression model to establish a baseline performance for predicting house prices. This model helps to understand the linear relationships between the features and the target variable.
+- Implemented and evaluated a Linear Regression model to establish a baseline performance for predicting house prices. This model helped to understand the linear relationships between the features and the target variable.
   
   ```python
+  #start linear model
   from sklearn.linear_model import LinearRegression
 
   reg = LinearRegression()
 
   reg.fit(X_train_s, y_train)
-  
+
+  #check the R^2
   reg.score(X_test_s, y_test)
-  
+
+  #use these later to compare with other models
   from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-  #Predictions and evaluation for Linear Regression
+  #predictions and evaluation for Linear Regression
   y_pred_lr = reg.predict(X_test_s)
   r2_lr = r2_score(y_test, y_pred_lr)
   rmse_lr = np.sqrt(mean_squared_error(y_test, y_pred_lr))
@@ -461,35 +453,38 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
 - Implemented and evaluated a base Random Forest model with default parameters to capture non-linear relationships and interactions between features, providing a comparison with the baseline Linear Regression model.
   
   ```python
+  #initial random forest with default parameters
   from sklearn.ensemble import RandomForestRegressor
 
   forest = RandomForestRegressor()
   forest.fit(X_train_s, y_train)
+
+  #check R^2 to get an idea of fit
+  forest.score(X_test_s, y_test)
   
-  #Predictions and evaluation for base Random Forest
+  #predictions and evaluation for base Random Forest
   y_pred_rf_base = forest.predict(X_test_s)
   r2_rf_base = r2_score(y_test, y_pred_rf_base)
   rmse_rf_base = np.sqrt(mean_squared_error(y_test, y_pred_rf_base))
   mae_rf_base = mean_absolute_error(y_test, y_pred_rf_base)
-  
-  forest.score(X_test_s, y_test)
   ```
 
 ## Hyperparameter Tuning
 - To improve the Random Forest model's performance, RandomizedSearchCV was used to find the optimal hyperparameters. Initially, GridSearchCV was attempted, but it was too time-consuming. Therefore, a smaller subset of the training data was created to expedite the RandomizedSearchCV process. After trying various configurations, a suitable setup for RandomizedSearchCV was found that completed in approximately 10 minutes. The best parameters from the RandomizedSearchCV were then used to retrain the model on the full training dataset.
   
   ```python
-  # Print the shape of X_train and y_train
+  #decided to hypertune on a smaller subset of training data
+  #print the shape of X_train and y_train
   print("Number of samples in X_train:", X_train.shape[0])
   print("Number of samples in y_train:", y_train.shape[0])
   
-  #random 5000
-  # Further split the training set to create a smaller subset for faster computation
-  # Using underscores to ignore the remaining parts of the split
+  #random 5000 subset
+  #further split the training set to create a smaller subset for faster computation
+  #using underscores to ignore the remaining parts of the split
   X_train_small, _, y_train_small, _ = train_test_split(X_train_s, y_train, train_size=5000,
   random_state=42, shuffle=True)
   
-  # Print the shape of the smaller subset to confirm
+  #print the shape of the smaller subset to confirm
   print("Number of samples in X_train_small:", X_train_small.shape[0])
   print("Number of samples in y_train_small:", y_train_small.shape[0])
 
@@ -497,47 +492,47 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   from sklearn.model_selection import RandomizedSearchCV
   from scipy.stats import randint
   
-  # Define the parameter distributions with narrower ranges
+  #define the parameter distributions
   param_dist = {
-      'n_estimators': randint(100, 500),  # Reduced range
-      'max_depth': randint(10, 30),       # Reduced range
+      'n_estimators': randint(100, 500), 
+      'max_depth': randint(10, 30),      
       'min_samples_split': randint(2, 10),
       'min_samples_leaf': randint(1, 5)
   }
   
-  # Initialize the model
+  #initialize the model
   forest = RandomForestRegressor(random_state=42)
   
-  # Set up RandomizedSearchCV
-  n_iter_search = 30  # Adjust as needed
+  #set up RandomizedSearchCV
+  n_iter_search = 30  #adjust as needed
   random_search = RandomizedSearchCV(estimator=forest, param_distributions=param_dist,
   n_iter=n_iter_search, cv=3, scoring='r2', n_jobs=-1, verbose=2, random_state=42)
   
-  # Start timing
+  #start timing
   start_time = time.time()
 
-  # Fit the RandomizedSearchCV to the reduced training data
+  #fit the RandomizedSearchCV to the reduced training data
   random_search.fit(X_train_small, y_train_small)
   
-  # End timing
+  #end timing
   end_time = time.time()
   
-  # Calculate the time taken
+  #calculate the time taken
   total_time = end_time - start_time
   print(f"Total time for RandomizedSearchCV with 30 iterations: {total_time / 60:.2f} minutes")
   
-  # Print the best parameters and best score
+  #print the best parameters and best score
   print("Best parameters found with RandomizedSearchCV: ", random_search.best_params_)
   print("Best cross-validation score with RandomizedSearchCV (R^2): ",
   random_search.best_score_)
 
-  # Retrain the model on the full dataset with the best parameters
+  #retrain the model on the full dataset with the best parameters
   best_forest = random_search.best_estimator_
   best_forest.fit(X_train_s, y_train)
   score = best_forest.score(X_test_s, y_test)
   print(f"R^2 score on test data: {score}")
 
-  # Predictions and evaluation for the tuned Random Forest
+  #predictions and evaluation for the tuned Random Forest
   y_pred_rf_tuned = best_forest.predict(X_test_s)
   r2_rf_tuned = r2_score(y_test, y_pred_rf_tuned)
   rmse_rf_tuned = np.sqrt(mean_squared_error(y_test, y_pred_rf_tuned))
@@ -545,13 +540,13 @@ Exploratory Data Analysis (EDA) is a crucial step in understanding the dataset a
   ```
 
 ## Model Evaluation
-This section compares the performance of different models using various evaluation metrics and visualizations. The goal is to identify which model provides the best predictive accuracy for the housing price data. 
+This section compares the performance of different models using various evaluation metrics and visualizations. The goal was to identify which model would provide the best predictive accuracy for the housing price data. 
 
 ### Comparison of R^2, RMSE, and MAE Metrics
-To evaluate the models, we compared the R-squared (R^2), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE) metrics. These metrics provide insights into how well each model fits the data and predicts the housing prices.
+The models were evaluated by comparing the R-squared (R^2), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE) metrics. These metrics provide insights into how well each model fits the data and predicts the housing prices.
 
   ```python
-  # Create a DataFrame to display the results
+  #create a DataFrame to display the results
   results = pd.DataFrame({
       'Model': ['Linear Regression', 'Base Random Forest', 'Tuned Random Forest'],
       'R^2': [r2_lr, r2_rf_base, r2_rf_tuned],
@@ -571,25 +566,23 @@ To evaluate the models, we compared the R-squared (R^2), Root Mean Squared Error
 Based on these metrics, the Tuned Random Forest model is the best performer. It has the highest R^2 value, indicating the best fit to the data. Additionally, it has the lowest RMSE and MAE values, showing that it makes the most accurate predictions on average and has the smallest average prediction error. Therefore, the Tuned Random Forest model is the most accurate and reliable model for predicting housing prices in this dataset.
 
 ### Comparison of Predicted vs Actual Values
-This section visualizes the predicted values against the actual values for both the Linear Regression and the Tuned Random Forest models. The goal is to assess how well each model's predictions match the true house prices.
+This section visualizes the predicted values against the actual values for both the Linear Regression and the Tuned Random Forest models. The goal was to assess how well each model's predictions matched the true house prices.
 
-A scatter plot is used to compare the predictions from the Linear Regression model and the Tuned Random Forest model. In these plots, each point represents a single house, with its position determined by the actual price and the predicted price from the respective model. The red dashed line represents the line of perfect prediction, where the predicted values perfectly match the actual values.*fix tense in many sections?
+A scatter plot is used to compare the predictions from the Linear Regression model and the Tuned Random Forest model. In this plot, each point represents a single house, with its position determined by the actual price and the predicted price from the respective model. The red dashed line represents the line of perfect prediction, where the predicted values perfectly match the actual values.
 
   ```python
-  import matplotlib.pyplot as plt
-
   # Predictions
   y_pred_linear = reg.predict(X_test_s)
   y_pred_forest = best_forest.predict(X_test_s)
   
-  # Scatter plot for linear regression
+  #scatter plot for linear regression
   plt.figure(figsize=(8, 6))
   plt.scatter(y_test, y_pred_linear, color='blue', alpha=0.5, label='Linear Regression')
   
-  # Scatter plot for random forest
+  #scatter plot for random forest
   plt.scatter(y_test, y_pred_forest, color='green', alpha=0.5, label='Random Forest')
   
-  # Plotting the diagonal line
+  #plotting the diagonal line
   plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red',
   linestyle='--', linewidth=2)
   
@@ -613,22 +606,20 @@ Key findings include:
 - `INLAND`: The second most influential feature, with an importance score of 0.14.
 - `longitude` and `latitude`: Contributed with importance scores of 0.09 and 0.08, respectively.
 - `house_median_age`: Had a smaller yet significant importance score of 0.05.
-- **Remaining Features**: Exhibited progressively smaller importance scores, indicating minimal impact on the model’s predictions.*edit bullet?
+- Remaining features: Exhibited progressively smaller importance scores, indicating minimal impact on the model’s predictions.
 
 Overall, it was observed that **income**, **geographical location**, and **housing age** were the most influential factors affecting the model's predictions.
 
   ```python
-  # Access feature importances
+  #access feature importances
   importances = best_forest.feature_importances_
   
-  # Match importances to features
-  feature_names = X_train.columns  # Use X_train directly if it has the correct column names
+  #match importances to features
+  feature_names = X_train.columns  #used X_train because X_train_s gave me issues
   feature_importances = pd.Series(importances, index=feature_names)
   
-  # Sort and visualize
+  #sort and visualize
   sorted_importances = feature_importances.sort_values(ascending=False)
-  
-  import matplotlib.pyplot as plt
   
   plt.figure(figsize=(10, 6))
   sorted_importances.plot(kind='barh', color='#4682B4')
@@ -640,14 +631,7 @@ Overall, it was observed that **income**, **geographical location**, and **housi
   plt.show()
 
   #code to get the actual importance numbers
-  # Access feature importances
-  importances = best_forest.feature_importances_
-  
-  # Match importances to features
-  feature_names = X_train.columns  # Use X_train directly if it has the correct column names
-  feature_importances = pd.Series(importances, index=feature_names)
-  
-  # Sort and display the top features with their importance scores
+  #sort and display the top features with their importance scores
   sorted_importances = feature_importances.sort_values(ascending=False)
   print(sorted_importances)
   ```
@@ -678,19 +662,19 @@ Overall, it was observed that **income**, **geographical location**, and **housi
 ### Summary of Goals
 
 At the outset of the project, the primary goals were to:
-1. Develop a predictive model for housing prices in California using machine learning techniques.
-2. Perform comprehensive data exploration and preprocessing to prepare the dataset for modeling.
+1. Perform comprehensive data exploration and preprocessing to prepare the dataset for modeling.
+2. Develop a predictive model for housing prices in California using machine learning techniques.
 3. Compare the performance of different models, including Linear Regression and Random Forest, and optimize model performance through hyperparameter tuning.
 4. Assess model performance using key metrics and analyze feature importance to understand the factors influencing housing prices.
 5. Provide clear visualizations and actionable insights based on the analysis to aid decision-making.
 
 ### Achievement of Objectives
 
-1. **Predictive Modeling**:
-   - Successfully developed and evaluated a baseline Linear Regression model and a Random Forest model. The Random Forest model, particularly after hyperparameter tuning, demonstrated superior predictive accuracy compared to the Linear Regression model.
-
-2. **Data Exploration and Preprocessing**:
+1. **Data Exploration and Preprocessing**:
    - Conducted thorough data exploration to understand feature distributions and relationships. Applied necessary preprocessing steps such as handling missing values, encoding categorical variables, and scaling features to ensure the data was in optimal shape for modeling.
+
+2. **Predictive Modeling**:
+   - Successfully developed and evaluated a baseline Linear Regression model and a Random Forest model. The Random Forest model, particularly after hyperparameter tuning, demonstrated superior predictive accuracy compared to the Linear Regression model.
 
 3. **Model Comparison and Hyperparameter Tuning**:
    - Compared the performance of Linear Regression and Random Forest models, finding the Random Forest model to be more accurate. Used RandomizedSearchCV to optimize the Random Forest model's parameters, resulting in improved performance metrics.
@@ -702,7 +686,6 @@ At the outset of the project, the primary goals were to:
    - Created visualizations such as scatter plots and feature importance charts to clearly present model results. Derived insights on how key features like median income, location, and housing age impact housing prices, providing actionable information for data scientists and decision-makers.
 
 The project met its objectives by demonstrating the effectiveness of machine learning techniques in predicting housing prices and delivering valuable insights for understanding the driving factors behind housing prices.
-*decide if whole section necessary or just edit it
 
 ## Limitations
 
@@ -738,7 +721,7 @@ The project met its objectives by demonstrating the effectiveness of machine lea
 
 ## Acknowledgements
 
-I would like to express my gratitude to [YouTube Tutorial Creator’s Name or Channel] for their invaluable tutorial*link, which provided the initial inspiration for analyzing the California Housing Prices dataset. While the tutorial helped me get started and offered foundational insights into Random Forest modeling, I conducted the analysis and implemented the models independently, tailoring the techniques to fit the specific needs of this project. Their(their name) comprehensive and insightful content greatly contributed to the success of this analysis.
+I would like to express my gratitude to the NeuralNine Youtube Channel for their invaluable [tutorial](https://www.youtube.com/watch?v=Wqmtf9SA_kk), which provided the initial inspiration for analyzing the California Housing Prices dataset. While the tutorial helped me get started and offered foundational insights into Random Forest modeling, I conducted the analysis and implemented the models independently, tailoring the techniques to fit the specific needs of this project. NeuralNine's comprehensive and insightful content greatly contributed to the success of this analysis.
 
 ## Project Conclusion
 
